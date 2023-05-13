@@ -39,4 +39,4 @@ jobs:
             docker stop ${{ github.event.repository.name }}
             docker rm ${{ github.event.repository.name }}
             docker rmi --force ${{ secrets.DOCKER_HUB_USERNAME }}/${{ github.event.repository.name }}
-            docker run -d -p 8000:8000 --name ${{ github.event.repository.name }} --restart unless-stopped ${{ secrets.DOCKER_HUB_USERNAME }}/${{ github.event.repository.name }}:latest
+            docker run -d -p 8000:8000 --env-file .env --name ${{ github.event.repository.name }} --restart unless-stopped ${{ secrets.DOCKER_HUB_USERNAME }}/${{ github.event.repository.name }}:latest
