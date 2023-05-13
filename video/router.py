@@ -64,7 +64,7 @@ def upload(token: Annotated[str, Depends(oauth2_scheme)], payload: VideoBaseSche
         print(e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="сорри"
+            detail=e
         )
     return user_db_services.create_video(session, video=payload)
 
