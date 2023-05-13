@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Главная страница</title>
+    <link rel="stylesheet" type="text/css" href="login-page.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+<nav class="flex justify-between text-3xl my-3">
+    <a href="http://0.0.0.0:8000/pages/main_page">
+        UrfuTube
+    </a>
+    <div>
+        <a href="/pages/login">Вход</a>
+    </div>
+    <div class="flex-center -space-x-2 overflow-hidden pr-10">
+        <a href="/pages/profile"><img class="inline-block h-11 w-11 rounded-full ring-2 ring-white"
+                        src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                        alt=""></a>
+    </div>
+</nav>
+<main class="main-list">
+    <h2>Главная страница</h2>
+    {% for operation in operations %}
+    <ul class="video-list boxShadow">
+        <a href="/pages/video/{{operation.id}}">
+            <li>
+                <h3>{{ operation.name }}</h3>
+                <div class="video-container">
+                    <video width="300" height="300" preload="metadata" controls>
+                        <source src="{{ operation.url }}#t=0.2" type="video/mp4">
+                    </video>
+                    <div class="video-text">
+                        <p>{{ operation.description }}</p>
+                    </div>
+                </div>
+            </li>
+        </a>
+    </ul>
+    {% endfor %}
+</main>
+</body>
+</html>
+<style>
+    body {
+        font-family: "Raleway", sans-serif;
+        color: #333333;
+        margin: 0;
+    }
+
+    h2 {
+        display: flex;
+        justify-content: center;
+        flex: auto;
+        font-size: 24px;
+    }
+
+    h3 {
+        display: flex;
+        justify-content: left;
+        flex: auto;
+        font-size: 22px;
+    }
+
+    .main-list {
+        display: grid;
+        justify-content: center;
+    }
+
+    .video-list {
+        height: auto;
+        width: 800px;
+        border-radius: 10px;
+        border: 4px solid white;
+        padding: 10px;
+        margin: 10px;
+    }
+
+    .boxShadow {
+        margin: 1em auto;
+        padding: 1em;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .video-container{
+        position: relative;
+    }
+
+    .video-text{
+        position: absolute;
+        top: 0;
+        padding-left: 350px;
+        transform: translate(0, -5px);
+        text-align: center;
+    }
+</style>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Загрузка видео</title>
+    <link rel="stylesheet" type="text/css" href="login-page.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="h-full">
+<nav class="flex justify-between text-3xl my-3">
+    <a href="http://0.0.0.0:8000/pages/main_page">
+        UrfuTube
+    </a>
+    <div class="flex-center -space-x-2 overflow-hidden pr-10">
+        <a href=""><img class="inline-block h-11 w-11 rounded-full ring-2 ring-white"
+                        src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                        alt=""></a>
+    </div>
+</nav>
+<div>
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+        <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Загрузите видео</h2>
+    </div>
+    <form id="form" enctype="multipart/form-data">
+        <div class="mt-2">
+            <div>
+                <input type="text" name="name" id="name"
+                       class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                       placeholder=" Имя">
+            </div>
+            <div class="mt-2">
+                <input type="text" name="description" id="description"
+                       class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                       placeholder=" Описание">
+            </div>
+            <p><input type="file" name="file" id="file"></p>
+            <button type="submit" onclick="window.location.href = '/pages/main_page'" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Отправить</button>
+<!--            <p><input type="submit" onclick="window.location.href = '/pages/main_page'" value="Отправить"></p>-->
+
+            <!--            <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Добавить видео</button>-->
+        </div>
+    </form>
+</div>
+<script>
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        let object = {};
+        formData.forEach(function (value, key) {
+            if (key !== 'file') {
+                object[key] = value;
+            }
+        });
+        let json_data = JSON.stringify(object);
+
+        let formData1 = new FormData();
+        formData1.append('payload', json_data);
+        formData1.append('file', formData.get('file'));
+
+        const getCookie = (name) => {
+            return document.cookie.split('; ').reduce((r, v) => {
+                const parts = v.split('=')
+                return parts[0] === name ? decodeURIComponent(parts[1]) : r
+            }, '')
+        }
+
+
+        fetch('/video/upload_video', {
+            method: 'POST',
+            body: formData1,
+            headers: new Headers({
+                'Authorization': 'Bearer ' + getCookie('access_token'),
+            }),
+        }).then(
+            response => {
+                return response.json();
+            }
+        );
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Видео</title>
+    <link rel="stylesheet" type="text/css" href="login-page.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="w-800 h-full">
+<nav class="flex justify-between text-3xl my-3">
+    <a href="http://0.0.0.0:8000/pages/main_page">
+        UrfuTube
+    </a>
+    <div class="flex-center -space-x-2 overflow-hidden pr-10">
+        <a href="/pages/login"><img class="inline-block h-11 w-11 rounded-full ring-2 ring-white"
+                        src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                        alt=""></a>
+    </div>
+</nav>
+
+<div class="container-video boxShadow">
+    {% for operation in operations %}
+    <div>
+        <div class="video-items">
+            <video width="500" preload="metadata" controls>
+                <source src="{{ operation.url }}#t=0.2" type="video/mp4">
+            </video>
+        </div>
+        <h3 class="name">{{ operation.name }}</h3>
+        <p>{{operation.user_id}}</p>
+        <p class="description">{{operation.description}}</p>
+    </div>
+    {% endfor %}
+</div>
+<div class="container-likes">
+    {% for operation in operations %}
+    <form id="form">
+        <button type="submit" onClick="window.location.href=window.location.href" id="like" name="like"><img width="40"
+                                                                                                             src="{{ url_for('static', path='like.svg') }}"
+                                                                                                             alt="">
+        </button>
+        <h>{{operation.count_like}}</h>
+    </form>
+    {% endfor %}
+    <form id="form-dislike">
+        <button type="submit" onClick="window.location.href=window.location.href" id="dislike" name="dislike"><img width="40"
+                                                               src="{{ url_for('static', path='dislike.png') }}" alt="">
+        </button>
+    </form>
+</div>
+<script>
+    let url = window.location.href
+    const form = document.getElementById('form');
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        let video_id = window.location.pathname.split('/')[3];
+
+        const formData = new FormData(form);
+        const jsonObject = Object.fromEntries(formData);
+        const jsonString = JSON.stringify({"video_id": video_id});
+
+        const getCookie = (name) => {
+            return document.cookie.split('; ').reduce((r, v) => {
+                const parts = v.split('=')
+                return parts[0] === name ? decodeURIComponent(parts[1]) : r
+            }, '')
+        }
+
+        console.log(jsonString)
+        fetch('/video/add_like', {
+            method: 'POST',
+            body: jsonString,
+            headers:
+                new Headers({
+                    'Authorization': 'Bearer ' + getCookie('access_token'),
+                    "Content-Type": "application/json",
+                }),
+        }).then(
+            response => {
+                return response.json();
+            }
+        );
+    })
+    ;
+
+    const form1 = document.getElementById('form-dislike');
+    form1.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        let video_id = window.location.pathname.split('/')[3];
+
+        const formData = new FormData(form1);
+        const jsonObject = Object.fromEntries(formData);
+        const jsonString = JSON.stringify({"video_id": video_id});
+
+        const getCookie = (name) => {
+            return document.cookie.split('; ').reduce((r, v) => {
+                const parts = v.split('=')
+                return parts[0] === name ? decodeURIComponent(parts[1]) : r
+            }, '')
+        }
+
+        console.log(jsonString)
+        fetch('/video/add_dislike', {
+            method: 'POST',
+            body: jsonString,
+            headers:
+                new Headers({
+                    'Authorization': 'Bearer ' + getCookie('access_token'),
+                    "Content-Type": "application/json",
+                }),
+        }).then(
+            response => {
+                return response.json();
+            }
+        );
+    })
+    ;
+</script>
+</body>
+</html>
+<style>
+    .container-video {
+        margin: auto;
+        display: flex;
+        border-radius: 20px;
+        justify-content: center;
+    }
+
+    .boxShadow {
+        margin: 1em auto;
+        padding: 1em;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    h3 {
+        font-size: 30px;
+        font-weight: bold;
+    }
+
+    p {
+        font-size: 20px;
+    }
+
+    .description {
+        font-size: 22px;
+    }
+
+    .video-items {
+        display: flex;
+        justify-content: center;
+    }
+
+    .container-likes {
+        display: flex;
+        justify-content: center;
+    }
+
+    button {
+
+        padding: 1.2rem 2rem;
+        cursor: pointer;
+        user-select: none;
+        border: 2px solid grey;
+        border-radius: 15px;
+        outline: none;
+        transition: background 9999999s;
+    }
+
+    button:focus {
+        background: red;
+        border-radius: 15px;
+        transition: background 0s;
+    }
+
+</style>
