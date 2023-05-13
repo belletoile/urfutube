@@ -53,6 +53,7 @@ def upload(token: Annotated[str, Depends(oauth2_scheme)], payload: VideoBaseSche
         data = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
         file_url = save_video(file)
         payload.url = file_url
+        payload.count_like = 0
         # stmt2 = session.query(User).get(payload.user_id)
         payload.user_id = data["name"]
         print(payload.user_id)
