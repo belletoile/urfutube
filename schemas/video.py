@@ -19,6 +19,7 @@ class VideoBaseSchema(BaseModel):
     name: str
     description: str
     user_id: int = None
+    username: str = None
     # like: list
     # dislike: list
     url: str = None

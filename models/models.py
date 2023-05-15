@@ -88,6 +88,7 @@ class Video(Base):
     __tablename__ = "video"
     id = Column(Integer, primary_key=True)
     user_id = Column(String)
+    username = Column(String)
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
     created_at = Column(TIMESTAMP, default=datetime.utcnow)
@@ -116,7 +117,7 @@ class User(Base):
 
     def __repr__(self):
         """Returns string representation of model instance"""
-        return "<User {full_name!r}>".format(full_name=self.full_name)
+        return "<User {name!r}>".format(name=self.name)
 
     @staticmethod
     def hash_password(password) -> bytes:

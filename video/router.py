@@ -27,6 +27,7 @@ router = APIRouter(
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="user/login")
 
+
 # @router.get("/")
 # def get_places_filter(
 #         parking: Optional[bool] = False,
@@ -49,14 +50,14 @@ def upload(token: Annotated[str, Depends(oauth2_scheme)], payload: VideoBaseSche
            file: UploadFile = File(...),
            ):
     try:
-        print(token)
         data = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
         file_url = save_video(file)
         payload.url = file_url
         payload.count_like = 0
         # stmt2 = session.query(User).get(payload.user_id)
-        payload.user_id = data["name"]
-        print(payload.user_id)
+        payload.user_id = data["id"]
+        stmt = session.query(User).get(data["id"])
+        payload.username = stmt.surname
         # likes = payload.like
         # dislikes = payload.dislike
         # payload.like = []
@@ -71,7 +72,8 @@ def upload(token: Annotated[str, Depends(oauth2_scheme)], payload: VideoBaseSche
 
 
 @router.post('/add_like')
-def like(token: Annotated[str, Depends(oauth2_scheme)], payload: VideoLikeSchema = Body(), session: Session = Depends(get_db)):
+def like(token: Annotated[str, Depends(oauth2_scheme)], payload: VideoLikeSchema = Body(),
+         session: Session = Depends(get_db)):
     stmt = session.query(Video).get(int(payload.video_id))
     data = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
     like = session.query(User).filter_by(id=int(data["id"])).first()
@@ -94,7 +96,8 @@ def like(token: Annotated[str, Depends(oauth2_scheme)], payload: VideoLikeSchema
 
 
 @router.post('/add_dislike')
-def dislike(token: Annotated[str, Depends(oauth2_scheme)], payload: VideoLikeSchema = Body(), session: Session = Depends(get_db)):
+def dislike(token: Annotated[str, Depends(oauth2_scheme)], payload: VideoLikeSchema = Body(),
+            session: Session = Depends(get_db)):
     stmt = session.query(Video).get(payload.video_id)
     data = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
     dislike = session.query(User).filter_by(id=int(data["id"])).first()
@@ -116,7 +119,6 @@ def dislike(token: Annotated[str, Depends(oauth2_scheme)], payload: VideoLikeSch
     return {'200'}
 
 
-
 @router.get('/list')
 def get_video(session: Session = Depends(get_db)):
     return session.query(Video).all()
@@ -134,3 +136,11 @@ def get_video_id(id: int, session: Session = Depends(get_db)):
     result = session.query(Video).filter(Video.id == id)
     # stmt = session.query(User).filter(User.id == result.id)
     return result.all()
+
+
+@router.get('/my_video')
+def get_my_video(token: Annotated[str, Depends(oauth2_scheme)], session: Session = Depends(get_db)):
+    data = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+    stmt = session.query(Video).filter_by(user_id=str(data['id']))
+    # stmt = session.query(Video).filter_by(user_id="3")
+    return stmt.all()

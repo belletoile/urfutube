@@ -2,12 +2,11 @@
 <html>
 <head>
     <title>Видео</title>
-    <link rel="stylesheet" type="text/css" href="login-page.css">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="w-800 h-full">
 <nav class="flex justify-between text-3xl my-3">
-    <a href="http://0.0.0.0:8000/pages/main_page">
+    <a href="/pages/main_page">
         UrfuTube
     </a>
     <div class="flex-center -space-x-2 overflow-hidden pr-10">
@@ -26,7 +25,7 @@
             </video>
         </div>
         <h3 class="name">{{ operation.name }}</h3>
-        <p>{{operation.user_id}}</p>
+        <p>{{operation.username}}</p>
         <p class="description">{{operation.description}}</p>
     </div>
     {% endfor %}

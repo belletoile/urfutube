@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request, Depends
 from fastapi.templating import Jinja2Templates
 
 from user.router import profile, login
-from video.router import get_video_id, get_video
+from video.router import get_video_id, get_video, get_my_video
 
 router = APIRouter(
     prefix="/pages",
@@ -18,8 +18,8 @@ def get_base_page(request: Request):
 
 
 @router.get("/profile")
-def get_search_page(request: Request, operations=Depends(get_video)):
-    return templates.TemplateResponse("profile.html", {"request": request, "operations": operations})
+def get_search_page(request: Request):
+    return templates.TemplateResponse("profile.html", {"request": request})
 
 
 @router.get("/main_page")

@@ -2,12 +2,11 @@
 <html>
 <head>
     <title>Главная страница</title>
-    <link rel="stylesheet" type="text/css" href="login-page.css">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="h-full">
 <nav class="flex justify-between text-3xl my-3">
-    <a href="http://0.0.0.0:8000/pages/main_page">
+    <a href="/pages/main_page">
         UrfuTube
     </a>
     <div class="flex-center -space-x-2 overflow-hidden pr-10">
@@ -19,8 +18,69 @@
 <div>
     <a href="/pages/upload_video"
        class="flex w-200 justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Загрузить
-        видео</a>
-    <!--    <button type="submit" class="flex w-200 justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Загрузить видео</button>-->
+        видео
+    </a>
+    <div>
+        <h1>Мои видео</h1>
+        <div id="myData"></div>
+        {% for operation in operations %}
+        <li>
+            <h3>{{ operation.name }}</h3>
+            <div class="video-container">
+                <video width="300" height="300" preload="metadata" controls>
+                    <source src="{{ operation.url }}#t=0.2" type="video/mp4">
+                </video>
+                <div class="video-text">
+                    <p></p>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </div>
 </div>
+<script>
+    const getCookie = (name) => {
+        return document.cookie.split('; ').reduce((r, v) => {
+            const parts = v.split('=')
+            return parts[0] === name ? decodeURIComponent(parts[1]) : r
+        }, '')
+    }
+
+    fetch('/video/my_video', {
+        headers: new Headers({
+            'Authorization': 'Bearer ' + getCookie('access_token'),
+        }),
+    }).then(function (response) {
+        return response.json();
+    })
+        .then(function (data) {
+            appendData(data);
+        });
+
+    function appendData(data) {
+        var mainContainer = document.getElementById("myData");
+        for (let video_info of data) {
+            var div = document.createElement("div");
+            div.innerHTML = `
+        <ul class="video-list boxShadow">
+            <a href="/pages/video/${video_info.id}">
+                <li>
+                    <h3>${video_info.name}</h3>
+                    <div class="video-container">
+                        <video width="300" height="300" preload="metadata" controls>
+                            <source src=${video_info.url} type="video/mp4">
+                        </video>
+                        <div class="video-text">
+                            <p>${video_info.description}</p>
+                        </div>
+                    </div>
+                </li>
+            </a>
+        </ul>
+    `
+            mainContainer.appendChild(div);
+        }
+    }
+</script>
 </body>
 </html>
