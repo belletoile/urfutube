@@ -76,10 +76,27 @@
                     </div>
                 </li>
             </a>
+            <p style="text-align: center; color:red;"><input id="delete_button" type="button" value="Удалить" onclick="delete_video(${video_info.id});" /></p>
         </ul>
     `
             mainContainer.appendChild(div);
         }
+    }
+
+    function delete_video(video_id) {
+
+        fetch('/video/delete_video/?id_video=' + video_id, {
+            method: 'DELETE',
+            headers:
+                new Headers({
+                    'Authorization': 'Bearer ' + getCookie('access_token'),
+                    "Content-Type": "application/json",
+                }),
+        }).then(
+            response => {
+                return response.json();
+            }
+        )
     }
 </script>
 </body>

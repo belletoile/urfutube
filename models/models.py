@@ -109,8 +109,8 @@ class User(Base):
     surname = Column(String, nullable=False)
     is_active = Column(Boolean, default=False)
     photo_user = Column(String)
-    user_like = relationship('Video', secondary="videolike", back_populates='like')
-    user_dislike = relationship('Video', secondary="videodislike", back_populates='dislike')
+    user_like = relationship('Video', secondary="videolike", back_populates='like', cascade='all, delete')
+    user_dislike = relationship('Video', secondary="videodislike", back_populates='dislike', cascade='all, delete')
 
     UniqueConstraint("phone", name="uq_user_phone")
     PrimaryKeyConstraint("id", name="pk_user_id")

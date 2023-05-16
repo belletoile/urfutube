@@ -144,3 +144,13 @@ def get_my_video(token: Annotated[str, Depends(oauth2_scheme)], session: Session
     stmt = session.query(Video).filter_by(user_id=str(data['id']))
     # stmt = session.query(Video).filter_by(user_id="3")
     return stmt.all()
+
+
+@router.delete('/delete_video')
+def delete_my_video(token: Annotated[str, Depends(oauth2_scheme)], id_video: int,
+                    session: Session = Depends(get_db)):
+    data = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+    video = session.query(Video).filter_by(id=id_video).first()
+    session.delete(video)
+    session.commit()
+    return {'Ok'}
