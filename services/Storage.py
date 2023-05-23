@@ -1,6 +1,8 @@
 import boto3
 from loguru import logger
 
+from config import AWS_SECRET_ACCESS_KEY, AWS_ACCESS_KEY_ID
+
 
 class Storage:
     def __init__(self, bucket_name):
@@ -8,8 +10,8 @@ class Storage:
         self.s3 = boto3.client('s3',
                                endpoint_url='https://storage.yandexcloud.net',
                                region_name='ru-central1',
-                               aws_access_key_id='YCAJEsiRT6SE2LoMX6eIolAgl',
-                               aws_secret_access_key='YCMvBDu2XAuo3pJqyMbeL9z53_Y1rXozaAUk1cb5'
+                               aws_access_key_id=AWS_ACCESS_KEY_ID,
+                               aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
                                )
 
     def save_file(self, file_name):
