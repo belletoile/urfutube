@@ -62,9 +62,9 @@
         ).then(
             text => {
                 document.cookie = "access_token" + "=" + text.access_token + "; path=/";
+                window.location = "http://81.200.145.113:8000/pages/main_page";
             }
         );
-        window.location = "http://81.200.145.113:8000/pages/main_page"
     }
 </script>
 </body>
