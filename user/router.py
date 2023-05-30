@@ -1,10 +1,12 @@
 from typing import Optional, Dict, Annotated
 
+import jwt
 from fastapi import APIRouter,BackgroundTasks, UploadFile, File, Depends, Body, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from sqlalchemy import update
 
+import settings
 from db_initializer import get_db
 from models import models as user_model
 from models.models import User, VideoLike, Video
@@ -114,10 +116,10 @@ def profile(id: int,
 
 @router.post('/favorite_video')
 def fav_video(id_user: int, token: Annotated[str, Depends(oauth2_scheme)], session: Session = Depends(get_db)):
-
     return session.query(VideoLike).filter(VideoLike.user_id == id_user).all()
 
 
 @router.post('/my_video')
-def my_video(id_user: int, session: Session = Depends(get_db)):
-    return session.query(Video).filter(Video.user_id == id_user).all()
+def my_video(token: Annotated[str, Depends(oauth2_scheme)], session: Session = Depends(get_db)):
+    data = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+    return session.query(Video).filter(Video.user_id == str(data['id'])).all()
