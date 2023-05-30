@@ -1,23 +1,17 @@
-from base64 import b64decode
-from typing import Any, Sequence, Optional, List, Annotated
+from typing import Annotated
 
 import jwt
 from fastapi.security import OAuth2PasswordBearer
-from fastapi_filter import FilterDepends
-from sqlalchemy import select, Row, or_, func, distinct
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, Body, UploadFile, File, HTTPException, status
 
 from models.models import Video, User, VideoLike, VideoDislike
 
 from db_initializer import get_db
-from schemas.video import VideoSchema, VideoBaseSchema, VideoLikeSchema
+from schemas.video import VideoBaseSchema, VideoLikeSchema
 from services.files import save_video
 from services.db import users as user_db_services
 
-from enum import Enum
-from typing import List
-from fastapi import Query
 import settings
 
 router = APIRouter(
@@ -26,22 +20,6 @@ router = APIRouter(
 )
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="user/login")
-
-
-# @router.get("/")
-# def get_places_filter(
-#         parking: Optional[bool] = False,
-#         recreation_area: Optional[bool] = False,
-#         conference_hall: Optional[bool] = False,
-#         type_cafe: Optional[Cafe] = None,
-#         district: Optional[str] = None,
-#         hours: Optional[Hours] = None,
-#         session: Session = Depends(get_db),
-# ):
-#     queryset = session.query(Place)
-#     return queryset.filter(or_(Place.district == district, Place.type_cafe == type_cafe,
-#                                Place.parking == parking, Place.conference_hall == conference_hall,
-#                                Place.recreation_area == recreation_area, Place.opening_hours == hours)).all()
 
 
 @router.post('/upload_video')
@@ -54,14 +32,9 @@ def upload(token: Annotated[str, Depends(oauth2_scheme)], payload: VideoBaseSche
         file_url = save_video(file)
         payload.url = file_url
         payload.count_like = 0
-        # stmt2 = session.query(User).get(payload.user_id)
         payload.user_id = data["id"]
         stmt = session.query(User).get(data["id"])
         payload.username = stmt.surname
-        # likes = payload.like
-        # dislikes = payload.dislike
-        # payload.like = []
-        # payload.dislike = []
     except Exception as e:
         print(e)
         raise HTTPException(
@@ -126,15 +99,7 @@ def get_video(session: Session = Depends(get_db)):
 
 @router.get('/list_id')
 def get_video_id(id: int, session: Session = Depends(get_db)):
-    # query = select(Video).where(Video.id == id)
-    # result = session.execute(query).one()
-    # print(result)
-    # stmt = session.query(Video).get(id)
-    # stmt2 = session.query(User).get(stmt.user_id)
-    # result = session.query(Video).get(id)
-    # result.user_id = stmt2.name
     result = session.query(Video).filter(Video.id == id)
-    # stmt = session.query(User).filter(User.id == result.id)
     return result.all()
 
 
@@ -142,7 +107,6 @@ def get_video_id(id: int, session: Session = Depends(get_db)):
 def get_my_video(token: Annotated[str, Depends(oauth2_scheme)], session: Session = Depends(get_db)):
     data = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
     stmt = session.query(Video).filter_by(user_id=str(data['id']))
-    # stmt = session.query(Video).filter_by(user_id="3")
     return stmt.all()
 
 

@@ -1,18 +1,6 @@
-import enum
 import json
 
-from fastapi import Depends
-from fastapi_filter.contrib.sqlalchemy import Filter
-from sqlalchemy import select, Row
-
-from pydantic import BaseModel, Field, EmailStr
-from enum import Enum
-from typing import Optional, Any, Sequence
-from fastapi_filter import FilterDepends
-from sqlalchemy.engine.result import _TP
-from sqlalchemy.orm import Session
-
-from db_initializer import get_db
+from pydantic import BaseModel
 
 
 class VideoBaseSchema(BaseModel):

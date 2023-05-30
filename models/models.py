@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional, Union, List, Dict
 
 import bcrypt
 import jwt
@@ -10,10 +9,9 @@ from sqlalchemy import (
     Integer,
     Boolean,
     UniqueConstraint,
-    PrimaryKeyConstraint, ForeignKey, JSON, ARRAY, Enum, TIMESTAMP
+    PrimaryKeyConstraint, ForeignKey, TIMESTAMP
 )
-import enum
-from sqlalchemy.orm import mapped_column, relationship
+from sqlalchemy.orm import  relationship
 
 import settings
 from db_initializer import Base
@@ -33,54 +31,6 @@ class VideoDislike(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     video_id = Column(Integer, ForeignKey("video.id"))
-
-
-#
-#
-# class Tags(Base):
-#     """Models a tags table"""
-#     __tablename__ = "tags"
-#     id = Column(Integer, primary_key=True)
-#     place = relationship('Place', secondary="placetags", back_populates='tags')
-#     name = Column(String)
-
-# class Hours(enum.Enum):
-#     constantly = "Круглосуточно"
-#     on_weekdays = "По будням"
-#
-#
-# class Cost(enum.Enum):
-#     free = "Бесплатно"
-#     paid = "Платно"
-#
-#
-# class Cafe(enum.Enum):
-#     cafe = "Кафе"
-#     anti_cafe = "Антикафе"
-#     working_hall = "Рабочий зал"
-
-
-# class Place(Base):
-#     """Models a place table"""
-#     __tablename__ = "place"
-#     id = Column(Integer, primary_key=True)
-#     user_id = Column(Integer, ForeignKey("users.id"))
-#     name = Column(String, nullable=False)
-#     city = Column(String, nullable=False)
-#     district = Column(String, nullable=False)
-#     address = Column(String, nullable=False)
-#     description = Column(String, nullable=False)
-#     opening_hours = Column(String)
-#     cost = Column(String)
-#     type_cafe = Column(String)
-#     company_phone = Column(String)
-#     email = Column(String)
-#     site = Column(String)
-#     photo = Column(String)
-#     parking = Column(Boolean, default=False)
-#     recreation_area = Column(Boolean, default=False)
-#     conference_hall = Column(Boolean, default=False)
-#     tags = relationship('Tags', secondary="placetags", back_populates='place')
 
 
 class Video(Base):

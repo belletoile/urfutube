@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Request, Depends
 from fastapi.templating import Jinja2Templates
 
-from user.router import profile, login
-from video.router import get_video_id, get_video, get_my_video
+
+from video.router import get_video_id, get_video
 
 router = APIRouter(
     prefix="/pages",

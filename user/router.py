@@ -69,51 +69,6 @@ def login(payload: OAuth2PasswordRequestForm = Depends(),
     return user.generate_token()
 
 
-@router.post("/photo")
-def upload_avatar(id: int = None, file: UploadFile = File(...), session: Session = Depends(get_db)):
-    file_url = save_file_user(file)
-    stmt = session.query(User).get(id)
-    stmt.photo_user = file_url
-    session.add(stmt)
-    session.commit()
-    return file_url
-
-
-@router.post("/settings")
-def edit_profile(id: int, phone: Optional[str], name: Optional[str],
-                 surname: Optional[str], city: Optional[str],
-                 session: Session = Depends(get_db)):
-    stmt = session.query(User).get(id)
-    if name is None:
-        pass
-    else:
-        stmt.name = name
-    if surname is None:
-        pass
-    else:
-        stmt.surname = surname
-    if phone is None:
-        pass
-    else:
-        stmt.phone = phone
-    if city is None:
-        pass
-    else:
-        stmt.city = city
-    session.add(stmt)
-    session.commit()
-    return {'Status: 200 OK'}
-
-
-@router.get("", response_model=UserSchema)
-def profile(id: int,
-        session: Session = Depends(get_db)):
-    """Processes request to retrieve user
-    profile by id
-    """
-    return user_db_services.get_user_by_id(session=session, id=id)
-
-
 @router.post('/favorite_video')
 def fav_video(id_user: int, token: Annotated[str, Depends(oauth2_scheme)], session: Session = Depends(get_db)):
     return session.query(VideoLike).filter(VideoLike.user_id == id_user).all()
