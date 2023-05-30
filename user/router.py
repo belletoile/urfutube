@@ -1,6 +1,6 @@
 from typing import Optional, Dict, Annotated
 
-from fastapi import APIRouter, UploadFile, File, Depends, Body, HTTPException, status
+from fastapi import APIRouter,BackgroundTasks, UploadFile, File, Depends, Body, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from sqlalchemy import update
@@ -11,6 +11,7 @@ from models.models import User, VideoLike, Video
 from schemas.users import UserSchema, UserBaseSchema, CreateUserSchema
 from services.files import save_file_user
 from services.db import users as user_db_services
+from tasks.tasks import send_email
 
 router = APIRouter(
     prefix="/user",
@@ -22,11 +23,13 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="user/login")
 
 @router.post('/signup', response_model=UserSchema)
 def signup(
+        background_tasks: BackgroundTasks,
         payload: CreateUserSchema = Body(),
         session: Session = Depends(get_db)
 ):
     """Processes request to register user account."""
     payload.hashed_password = user_model.User.hash_password(payload.hashed_password)
+    background_tasks.add_task(send_email, payload)
     return user_db_services.create_user(session, user=payload)
 
 
