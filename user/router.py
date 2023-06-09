@@ -11,7 +11,6 @@ from db_initializer import get_db
 from models import models as user_model
 from models.models import User, VideoLike, Video
 from schemas.users import UserSchema, UserBaseSchema, CreateUserSchema
-from services.files import save_file_user
 from services.db import users as user_db_services
 from tasks.tasks import send_email
 
