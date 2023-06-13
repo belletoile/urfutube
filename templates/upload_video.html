@@ -3,6 +3,111 @@
 <head>
     <title>Загрузка видео</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        #loader {
+            margin-left: auto;
+            margin-right: auto;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #09f;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0); /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content/Box */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+        }
+
+
+        .center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .wave {
+            width: 5px;
+            height: 100px;
+            background: linear-gradient(45deg, #0009ff, #fff);
+            margin: 10px;
+            animation: wave 1s linear infinite;
+            border-radius: 20px;
+        }
+
+        .wave:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .wave:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .wave:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+
+        .wave:nth-child(5) {
+            animation-delay: 0.4s;
+        }
+
+        .wave:nth-child(6) {
+            animation-delay: 0.5s;
+        }
+
+        .wave:nth-child(7) {
+            animation-delay: 0.6s;
+        }
+
+        .wave:nth-child(8) {
+            animation-delay: 0.7s;
+        }
+
+        .wave:nth-child(9) {
+            animation-delay: 0.8s;
+        }
+
+        .wave:nth-child(10) {
+            animation-delay: 0.9s;
+        }
+
+        @keyframes wave {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(0);
+            }
+        }
+    </style>
 </head>
 <body class="h-full">
 <nav class="flex justify-between text-3xl my-3">
@@ -19,6 +124,26 @@
     <div class="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Загрузите видео</h2>
     </div>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <div class="modal_text">Подождите, идёт загрузка видео<br>Не закрывайте страницу</div>
+<!--            <div id="loader"></div>-->
+            <div class="center">
+                <div class="wave"></div>
+                <div class="wave"></div>
+                <div class="wave"></div>
+                <div class="wave"></div>
+                <div class="wave"></div>
+                <div class="wave"></div>
+                <div class="wave"></div>
+                <div class="wave"></div>
+                <div class="wave"></div>
+                <div class="wave"></div>
+            </div>
+        </div>
+    </div>
+
     <form id="form" enctype="multipart/form-data">
         <div class="mt-2">
             <div>
@@ -37,9 +162,16 @@
     </form>
 </div>
 <script>
-    form.addEventListener('submit', function (event) {
-        event.preventDefault();
 
+    let show_modal = () => {
+        let modal = document.getElementById("myModal");
+        modal.style.display = "block";
+    }
+
+    let call_api = (event) => {
+        show_modal()
+
+        event.preventDefault();
         const formData = new FormData(form);
         let object = {};
         formData.forEach(function (value, key) {
@@ -60,7 +192,6 @@
             }, '')
         }
 
-
         fetch('/video/upload_video', {
             method: 'POST',
             body: formData1,
@@ -71,8 +202,14 @@
             response => {
                 return response.json();
             }
-        );
-        alert("Если видео длинное, подождите на этой странице");
+        ).then(
+            response => modal.style.display = "none"
+        ).catch(
+            reason => modal.style.display = "none"
+        )
+    }
+    form.addEventListener('submit', function (event) {
+        call_api(event)
     });
 </script>
 </body>
